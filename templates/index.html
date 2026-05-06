@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Heart Disease Prediction</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      background: url('https://images.unsplash.com/photo-1603398071551-7c6d8a9e66ad') no-repeat center/cover;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #f4f4f4;
+      padding: 30px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .nav-link {
+      padding: 10px;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .nav-link:hover { background: #007bff; color: white; }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(103, 58, 183, 0.95);
+      color: white;
+      padding: 30px;
+      border-radius: 16px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    input, select {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .btn-container { grid-column: span 2; }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #ff9800;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .prediction { margin-top: 20px; text-align: center; }
+
+    .reference-box {
+      margin-top: 15px;
+      text-align: left;
+      font-size: 14px;
+      background: #ffffff20;
+      padding: 15px;
+      border-radius: 10px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h2>❤️ Predictor</h2>
+  <div class="nav-link" onclick="showSection('about')">Home</div>
+  <div class="nav-link" onclick="showSection('predict')">Prediction</div>
+</div>
+
+<div class="main-content">
+
+  <!-- ABOUT -->
+  <div class="container" id="aboutSection"
+       style="display: {{ 'none' if show_prediction_section else 'block' }};">
+    <h2>About</h2>
+    <p>This app predicts heart disease using machine learning based on medical attributes.</p>
+  </div>
+
+  <!-- PREDICTION -->
+  <div class="container" id="predictionSection"
+       style="display: {{ 'block' if show_prediction_section else 'none' }};">
+
+    <h2>Heart Disease Prediction</h2>
+
+    <form action="/predict" method="post">
+
+      <input type="number" name="age" placeholder="Age" required>
+
+      <select name="sex" required>
+        <option value="">Sex</option>
+        <option value="1">Male</option>
+        <option value="0">Female</option>
+      </select>
+
+      <select name="cp" required>
+        <option value="">Chest Pain</option>
+        <option value="0">Typical Angina</option>
+        <option value="1">Atypical Angina</option>
+        <option value="2">Non-anginal Pain</option>
+        <option value="3">Asymptomatic</option>
+      </select>
+
+      <input type="number" name="trestbps" placeholder="BP (mmHg)" required>
+      <input type="number" name="chol" placeholder="Cholesterol (mg/dL)" required>
+
+      <select name="fbs">
+        <option value="">Fasting Blood Sugar</option>
+        <option value="1">High (>120)</option>
+        <option value="0">Normal</option>
+      </select>
+
+      <input type="number" name="restecg" placeholder="ECG" required>
+      <input type="number" name="thalach" placeholder="Max Heart Rate" required>
+
+      <select name="exang">
+        <option value="">Exercise Angina</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+
+      <input type="number" step="0.1" name="oldpeak" placeholder="Oldpeak" required>
+
+      <select name="slope" required>
+        <option value="">Slope</option>
+        <option value="0">Upsloping</option>
+        <option value="1">Flat</option>
+        <option value="2">Downsloping</option>
+      </select>
+
+      <input type="number" name="ca" placeholder="Vessels (0-3)" required>
+
+      <select name="thal" required>
+        <option value="">Thal</option>
+        <option value="1">Normal</option>
+        <option value="2">Fixed Defect</option>
+        <option value="3">Reversible Defect</option>
+      </select>
+
+      <div class="btn-container">
+        <button type="submit">Predict</button>
+      </div>
+
+    </form>
+
+    <!-- RESULT -->
+    {% if prediction_text %}
+    <div class="prediction">
+      <h3>{{ prediction_text }}</h3>
+
+      {% if confidence %}
+      <p><b>Confidence:</b> {{ confidence }}%</p>
+      {% endif %}
+
+      <!-- ✅ REAL VALUES BASED ON DATASET -->
+      <div class="reference-box">
+        <b>📊 Medical Reference Values:</b><br><br>
+
+        ❤️ <b>Cholesterol:</b> Normal < 200 mg/dL<br>
+        🩺 <b>Blood Pressure:</b> 90 – 120 mmHg<br>
+        🍬 <b>Fasting Blood Sugar:</b> Normal < 100 mg/dL<br>
+        ❤️ <b>Max Heart Rate:</b> 60 – 220 bpm<br>
+        ⚠️ <b>Oldpeak:</b> Lower values are healthier<br>
+        🧬 <b>Thal:</b> 1 = Normal, 2 = Fixed Defect, 3 = Reversible Defect<br>
+        🫀 <b>Vessels (ca):</b> 0–3 (Higher = more blockage)
+
+      </div>
+
+    </div>
+    {% endif %}
+
+    <button onclick="showSection('about')">Back</button>
+
+  </div>
+
+</div>
+
+<script>
+function showSection(section) {
+  document.getElementById("aboutSection").style.display =
+    section === 'about' ? "block" : "none";
+
+  document.getElementById("predictionSection").style.display =
+    section === 'predict' ? "block" : "none";
+}
+</script>
+
+</body>
+</html>
