@@ -50,6 +50,9 @@ This project uses SHAP (SHapley Additive exPlanations) to interpret model predic
 * Visualized how each feature contributes to heart disease prediction
 * Helps in making the model transparent and interpretable
 
+## ⚠️ Note
+Model files are not included. Run `model_training.py` to generate them.
+
 ##  How to Run Locally
 
 ### 1. Install dependencies
