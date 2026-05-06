@@ -73,8 +73,6 @@ http://127.0.0.1:5000
 heart-disease-prediction/
 ├── app.py
 ├── model_training.py
-├── analysis/
-│   └── analysis.py
 ├── templates/
 │   └── index.html
 ├── static/
